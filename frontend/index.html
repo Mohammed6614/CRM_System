@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Legendary CRM Frontend</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;background:#071923;color:#e2e8f0;padding:1rem;}
+    .card{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:1rem;margin:0.8rem 0;}
+    button{background:#22c55e;color:#07271b;border:0;padding:0.62rem 1rem;border-radius:8px;cursor:pointer;}
+    pre{background:#020617;overflow:auto;padding:1rem;border-radius:8px;}
+  </style>
+</head>
+<body>
+  <h1>Netlify frontend + Flask backend proxy</h1>
+  <p>Ensure <code>netlify.toml</code> is pointing <code>https://your-backend-url-here</code> to your hosted Flask URL.</p>
+
+  <div class="card">
+    <button id="loadCustomers">Load Customers (GET /api/customers)</button>
+    <pre id="customersOutput"></pre>
+  </div>
+
+  <div class="card">
+    <button id="loadGoals">Load Goals (GET /api/goals)</button>
+    <pre id="goalsOutput"></pre>
+  </div>
+
+  <script>
+    const customersOutput = document.getElementById('customersOutput');
+    const goalsOutput = document.getElementById('goalsOutput');
+    document.getElementById('loadCustomers').onclick = async () => {
+      const r = await fetch('/api/customers', { credentials: 'include' });
+      if (!r.ok) { customersOutput.textContent = 'Error: ' + r.status; return; }
+      const json = await r.json();
+      customersOutput.textContent = JSON.stringify(json, null, 2);
+    };
+    document.getElementById('loadGoals').onclick = async () => {
+      const r = await fetch('/api/goals', { credentials: 'include' });
+      if (!r.ok) { goalsOutput.textContent = 'Error: ' + r.status; return; }
+      const json = await r.json();
+      goalsOutput.textContent = JSON.stringify(json, null, 2);
+    };
+  </script>
+</body>
+</html>

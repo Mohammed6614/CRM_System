@@ -1,0 +1,94 @@
+* { box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #0f172a; color: #e2e8f0; }
+.container { width: min(1100px, 100%); margin: 3rem auto; padding: 0 1.5rem; }
+.navbar { background: linear-gradient(135deg, #0f172a, #1e293b); border-bottom: 1px solid #334155; }
+.navbar .container { display:flex; align-items:center; justify-content:space-between; padding: 1rem; }
+.brand { color:#38bdf8; font-size:1.5rem; text-decoration:none; }
+nav a { margin-left:0.8rem; color:#cbd5e1; text-decoration:none; font-weight:600; }
+nav a:hover { color:#fff; }
+.main { padding-top: 2rem; }
+h1 { color:#38bdf8; margin-bottom:1rem; }
+.btn, .btn-small, .btn-secondary { border:none; border-radius:8px; cursor:pointer; font-weight:700; transition: filter .2s; }
+.btn { background:#22c55e; color:#0f172a; padding:0.75rem 1.25rem; }
+.btn:hover { filter:brightness(1.05); }
+.btn-secondary { background:#3b82f6; color:white; padding:0.7rem 1.1rem; }
+.btn-danger { background:#ef4444; color:white; }
+.btn-small { background:#334155; color:#e2e8f0; padding:0.35rem 0.7rem; }
+.actions { margin:1rem 0; display:flex; gap:0.8rem; flex-wrap:wrap; }
+input { width:100%; padding:0.6rem 0.75rem; margin:0.3rem 0 1rem; border-radius:8px; border:1px solid #334155; background:#020617; color:#e2e8f0; }
+label { margin-top: 0.5rem; display:block; font-weight:600; }
+table { width:100%; border-collapse:collapse; background:#020617; border:1px solid #334155; }
+th,td { padding:0.85rem 0.75rem; border-bottom:1px solid #334155; text-align:left; }
+th { background:#1e293b; }
+tr:hover { background:#111827; }
+.footer { text-align:center; padding:1rem 0; border-top:1px solid #334155; color:#94a3b8; }
+.flash-messages { margin-bottom:1rem; }
+.flash { padding:0.8rem 1rem; border-radius:8px; margin-bottom:0.5rem; }
+.flash.success { background:#166534; color:#d1fae5; }
+.flash.danger { background:#7f1d1d; color:#fee2e2; }
+.flash.info { background:#1d4ed8; color:#dbeafe; }
+.stats-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:1rem; margin-bottom:1.3rem; }
+.card { background: linear-gradient(135deg, rgba(20, 25, 40, .9), rgba(17, 24, 39, .8)); border:1px solid rgba(96, 165, 250, .26); border-radius:18px; padding:1.2rem; box-shadow: 0 12px 25px rgba(8, 15, 30, 0.45); transition: transform .35s ease, box-shadow .35s ease; }
+.card:hover { transform: translateY(-5px); box-shadow: 0 20px 35px rgba(8, 15, 30, 0.6); }
+
+.btn { position: relative; overflow: hidden; transition: transform .2s ease, filter .2s ease; }
+.btn::after { content: '';
+  position: absolute; top: -120%; left: -45%; width: 210%; height: 250%; background: rgba(255,255,255,0.15); transform: rotate(30deg) translateX(-100%);
+  transition: transform .45s ease;
+}
+.btn:hover::after { transform: rotate(30deg) translateX(100%); }
+.btn:hover { transform: translateY(-2px); filter: saturate(1.15); }
+
+.btn-secondary, .btn-danger, .btn-small { transition: transform .2s ease, box-shadow .2s ease; }
+.btn-secondary:hover, .btn-danger:hover, .btn-small:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,.3); }
+
+input, select, textarea { transition: border-color .25s ease, box-shadow .25s ease; }
+input:focus, select:focus, textarea:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(96,165,250,0.18); outline: none; }
+
+@keyframes neonGlow {0%,100%{box-shadow: 0 0 4px rgba(56,189,248,.4), 0 0 12px rgba(56,189,248,.25);}50%{box-shadow: 0 0 8px rgba(56,189,248,.6), 0 0 18px rgba(56,189,248,.40);}}
+
+h1 { animation: neonGlow 3s ease-in-out infinite; }
+
+body::before { content: '';
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-image: linear-gradient(115deg, rgba(15,23,42,0.4), rgba(15,23,42,0.66)), radial-gradient(circle at top left, rgba(59,130,246,0.14), transparent 38%), radial-gradient(circle at bottom right, rgba(16,185,129,0.15), transparent 36%);
+  pointer-events: none; z-index:-1;
+  animation: driftBackground 18s linear infinite;
+}
+
+@keyframes driftBackground { 0% { transform: translate3d(0,0,0); } 50% { transform: translate3d(10px, 5px,0); } 100% { transform: translate3d(0,0,0); } }
+
+.business-panel { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1.2rem; }
+.business-panel .card { padding: 1rem; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.9rem; margin-top: 0.8rem; }
+.kpi-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 12px; padding: 0.7rem; text-align: center; box-shadow: inset 0 0 20px rgba(8, 15, 30, 0.25); }
+.kpi-label { font-size: 0.82rem; color: #94a3b8; }
+.kpi-value { font-size: 1.3rem; font-weight: 700; color: #60a5fa; }
+.goal-list { list-style: none; margin: 0; padding: 0; }
+.goal-list li { margin-bottom: 0.7rem; }
+.goal-progress { position: relative; height: 10px; background: #1e293b; border-radius: 999px; overflow: hidden; margin-top: 0.35rem; }
+.goal-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #38bdf8); transition: width .6s ease; }
+.goal-pct { font-size: 0.82rem; color: #94a3b8; font-weight: 600; margin-left: 0.45rem; }
+.business-actions ul { list-style: disc; margin: 0.75rem 0 0 1rem; padding: 0; }
+.business-actions ul li { margin-bottom: 0.45rem; }
+
+.business-reminders .reminder-list, .business-goals .goal-list { list-style: none; padding: 0; margin: 0.75rem 0 0 0; }
+.business-reminders .reminder-list li { margin-bottom: 0.65rem; display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; align-items: center; }
+.business-reminders .reminder-list li strong { display: block; color: #dbeafe; }
+.business-reminders .reminder-list li .small { font-size: 0.76rem; color: #94a3b8; }
+
+.mini-form { display: grid; gap: 0.5rem; margin-top: 0.8rem; }
+.mini-form input, .mini-form select { width: 100%; padding: 0.55rem 0.7rem; margin: 0; border: 1px solid #334155; border-radius: 8px; }
+.mini-form button { justify-self: start; }
+
+.pipeline .card { overflow-x: auto; }
+.pipeline table { width: 100%; border-collapse: collapse; border: 1px solid #334155; background: rgba(15, 23, 42, .8); }
+.pipeline th, .pipeline td { padding: 0.65rem 0.8rem; border-bottom: 1px solid #334155; }
+.pipeline th { background: rgba(30, 41, 59, .86); }
+.pipeline tr:hover { background: rgba(59, 130, 246, 0.09); }
+
+@media (min-width: 1000px) { .business-panel { grid-template-columns: 2fr 1fr 1fr; } }
+
+.graphs { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1.2rem; }
+@media (min-width: 900px) { .graphs { grid-template-columns: 1fr 1fr; } }
+

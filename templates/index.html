@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Welcome to Legendary CRM</h1>
+  <p>Use the fastest, most beautiful CRM that runs on Python + Flask.</p>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('register') }}">Get Started</a>
+    <a class="btn-secondary" href="{{ url_for('login') }}">Login</a>
+  </div>
+{% endblock %}

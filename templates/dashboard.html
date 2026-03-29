@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Dashboard</h1>
+  <p>Hello, {{ current_user.username }}! This is your glorious dashboard.</p>
+  <div class="stats-grid">
+    <div class="card"><h3>Customers</h3><p>{{ customer_count }}</p></div>
+    <div class="card"><h3>Audit Entries</h3><p>{{ audit_count }}</p></div>
+  </div>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('customers') }}">Manage Customers</a>
+    <a class="btn" href="{{ url_for('audit_log') }}">See Audit Log</a>
+  </div>
+
+  <section class="business-panel">
+    <div class="card business-overview">
+      <h3>Executive Snapshot</h3>
+      <div class="kpi-grid">
+        {% for label, value in business_kpis.items() %}
+        <div class="kpi-card">
+          <div class="kpi-label">{{ label }}</div>
+          <div class="kpi-value">{{ value }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="card business-goals">
+      <h3>Monthly Business Goals</h3>
+      <ul class="goal-list">
+        {% for item in business_goals %}
+        <li>
+          <strong>{{ item.goal }}</strong>
+          <div class="goal-progress">
+            <div class="goal-fill" style="width: {{ item.progress }}%"></div>
+          </div>
+          <span class="goal-pct">{{ item.progress }}%</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="card business-actions">
+      <h3>Quick Actions for Owner</h3>
+      <ul>
+        {% for action in executive_actions %}
+        <li>{{ action }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="card business-reminders">
+      <h3>Active Reminders</h3>
+      {% if reminders %}
+      <ul class="reminder-list">
+        {% for reminder in reminders[:6] %}
+        <li>
+          <strong>{{ reminder.message }}</strong>
+          <span class="small">due {{ reminder.due_date.strftime('%Y-%m-%d %H:%M') }}</span>
+          <form method="post" action="{{ url_for('complete_reminder', reminder_id=reminder.id) }}" style="display:inline;">
+            <button class="btn-small btn-secondary" type="submit">Done</button>
+          </form>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No active reminders yet.</p>
+      {% endif %}
+    </div>
+
+    <div class="card business-lite-inputs">
+      <h3>Quick Add</h3>
+      <form method="post" action="{{ url_for('add_goal') }}" class="mini-form">
+        <input name="goal_title" placeholder="Goal title" required>
+        <input name="goal_progress" type="number" min="0" max="100" placeholder="Progress %" value="0">
+        <input name="goal_due_date" type="date">
+        <button class="btn-small btn" type="submit">Add Goal</button>
+      </form>
+
+      <form method="post" action="{{ url_for('add_reminder') }}" class="mini-form">
+        <input name="reminder_message" placeholder="Reminder message" required>
+        <input name="reminder_due_date" type="datetime-local" required>
+        <button class="btn-small btn-secondary" type="submit">Add Reminder</button>
+      </form>
+
+      <form method="post" action="{{ url_for('add_deal') }}" class="mini-form">
+        <input name="deal_name" placeholder="Deal name" required>
+        <select name="deal_stage">
+          <option>Lead</option>
+          <option>Qualified</option>
+          <option>Proposal</option>
+          <option>Negotiation</option>
+          <option>Closed Won</option>
+          <option>Closed Lost</option>
+        </select>
+        <input name="deal_value" type="number" min="0" step="0.01" placeholder="Value" required>
+        <input name="deal_probability" type="number" min="0" max="100" placeholder="Probability" value="25">
+        <input name="deal_close_date" type="date">
+        <button class="btn-small btn-dismiss" type="submit" style="background:#f59e0b;color:#111827">Add Deal</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="pipeline">
+    <div class="card">
+      <h3>Deals Pipeline</h3>
+      <table>
+        <thead><tr><th>Name</th><th>Stage</th><th>Value</th><th>Probability</th><th>Close</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for deal in deals[:10] %}
+          <tr>
+            <td>{{ deal.name }}</td>
+            <td>{{ deal.stage }}</td>
+            <td>${{ '%.2f'|format(deal.value) }}</td>
+            <td>{{ deal.probability }}%</td>
+            <td>{{ deal.expected_close_date if deal.expected_close_date else '-' }}</td>
+            <td>
+              <form method="post" action="{{ url_for('update_deal', deal_id=deal.id) }}" class="inline-form">
+                <input name="deal_stage" value="{{ deal.stage }}" hidden>
+                <input name="deal_probability" value="{{ deal.probability }}" hidden>
+                <button class="btn-small btn-secondary">Refresh</button>
+              </form>
+              <form method="post" action="{{ url_for('delete_deal', deal_id=deal.id) }}" class="inline-form" onsubmit="return confirm('Delete deal?');">
+                <button class="btn-small btn-danger" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="graphs">
+    <div class="card">
+      <h3>Sales Funnel</h3>
+      <canvas id="funnelChart" height="140"></canvas>
+    </div>
+    <div class="card">
+      <h3>Portfolio Breakdown (Funds/Stocks)</h3>
+      <canvas id="fundsBarChart" height="120"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>Income / Expenses / Profit Curve</h3>
+      <canvas id="incomeCurveChart" height="170"></canvas>
+    </div>
+  </section>
+    <div class="card">
+      <h3>Portfolio Breakdown (Funds/Stocks)</h3>
+      <canvas id="fundsBarChart" height="120"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>Income / Expenses / Profit Curve</h3>
+      <canvas id="incomeCurveChart" height="170"></canvas>
+    </div>
+  </section>
+
+  <script>
+    const fundsLabels = {{ funds_by_class | map(attribute='label') | list | tojson }};
+    const fundsValues = {{ funds_by_class | map(attribute='value') | list | tojson }};
+
+    const months = {{ chart_months | tojson }};
+    const income = {{ income_history | tojson }};
+    const expenses = {{ expenses_history | tojson }};
+    const profit = {{ profit_history | tojson }};
+
+    new Chart(document.getElementById('fundsBarChart'), {
+      type: 'bar',
+      data: {
+        labels: fundsLabels,
+        datasets: [{
+          label: 'Value (USD)',
+          data: fundsValues,
+          backgroundColor: ['#34d399', '#60a5fa', '#a78bfa', '#f472b6'],
+          borderColor: ['#10b981', '#3b82f6', '#8b5cf6', '#ec4899'],
+          borderWidth: 1,
+          borderRadius: 6,
+          barPercentage: 0.65,
+          categoryPercentage: 0.7
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true, callbacks: { label: context => 'Value: $' + Number(context.parsed.y).toLocaleString() } }
+        },
+        scales: {
+          x: {
+            grid: { display: true, color: 'rgba(148, 163, 184, 0.28)', borderDash: [4, 4] },
+            ticks: { color: '#cbd5e1', font: { size: 12 } }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 25000, callback: value => '$' + value.toLocaleString(), color: '#cbd5e1', font: { size: 12 } },
+            grid: { display: true, color: 'rgba(148, 163, 184, 0.20)' },
+            border: { display: true, dash: [4, 2] }
+          }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('incomeCurveChart'), {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [
+          { label: 'Income', data: income, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.25)', tension: 0.35, fill: true, pointRadius: 4, pointHoverRadius: 6 },
+          { label: 'Expenses', data: expenses, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.16)', tension: 0.35, fill: true, pointRadius: 4, pointHoverRadius: 6 },
+          { label: 'Profit', data: profit, borderColor: '#38bdf8', backgroundColor: 'rgba(56,189,248,0.16)', tension: 0.35, fill: true, pointRadius: 4, pointHoverRadius: 6 }
+        ]
+      },
+      options: {
+        plugins: {
+          tooltip: { mode: 'index', intersect: false, callbacks: { label: context => context.dataset.label + ': $' + context.parsed.y.toLocaleString() } },
+          legend: { position: 'top' }
+        },
+        scales: {
+          x: {
+            grid: { display: true, color: 'rgba(148, 163, 184, 0.22)', borderDash: [3, 3] },
+            ticks: { color: '#cbd5e1', font: { size: 12 } }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 2000, callback: value => '$' + value.toLocaleString(), color: '#cbd5e1', font: { size: 12 } },
+            grid: { display: true, color: 'rgba(148, 163, 184, 0.20)', borderDash: [3, 3] },
+            border: { display: true, dash: [4, 2] }
+          }
+        },
+        interaction: { mode: 'index', intersect: false }
+      }
+    });
+
+    const funnelStages = {{ funnel_stages | tojson }};
+    const funnelValues = {{ funnel_values | tojson }};
+
+    new Chart(document.getElementById('funnelChart'), {
+      type: 'bar',
+      data: {
+        labels: funnelStages,
+        datasets: [{
+          label: 'Deal value pipeline',
+          data: funnelValues,
+          backgroundColor: ['rgba(59,130,246,0.85)', 'rgba(16,185,129,0.85)', 'rgba(234,179,8,0.85)', 'rgba(239,68,68,0.85)', 'rgba(34,197,94,0.85)', 'rgba(125,211,252,0.85)'],
+          borderColor: 'rgba(255,255,255,0.2)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { callback: value => '$' + value.toLocaleString() } } }
+      }
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Customers</h1>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('add_customer') }}">Add Customer</a>
+    <a class="btn-secondary" href="{{ url_for('export_customers') }}">Export CSV</a>
+  </div>
+  <table>
+    <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Company</th><th>Joined</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for customer in customers %}
+      <tr>
+        <td>{{ customer.id }}</td>
+        <td>{{ customer.first_name }} {{ customer.last_name }}</td>
+        <td>{{ customer.email }}</td>
+        <td>{{ customer.phone or '-' }}</td>
+        <td>{{ customer.company or '-' }}</td>
+        <td>{{ customer.created_at.strftime('%Y-%m-%d') }}</td>
+        <td>
+          <a class="btn-small" href="{{ url_for('edit_customer', customer_id=customer.id) }}">Edit</a>
+          <form action="{{ url_for('delete_customer', customer_id=customer.id) }}" method="post" style="display:inline-block;" onsubmit="return confirm('Delete this customer?');">
+            <button class="btn-small btn-danger" type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
